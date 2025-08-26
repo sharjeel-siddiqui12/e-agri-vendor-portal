@@ -1,0 +1,11 @@
+.mapWrapper {
+  padding-left: 0px;
+  width: 100%;
+  min-height: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: visible;
+  padding-right: 100px;
+}
