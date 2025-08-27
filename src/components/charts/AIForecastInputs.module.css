@@ -1,0 +1,12 @@
+.titleContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* same as Tailwind gap-2 */
+}
+
+.titleBar {
+  width: 0.25rem;  /* w-1 */
+  height: 1.5rem;  /* h-6 */
+  background-color: rgb(22 163 74); /* Tailwind green-600 */
+  border-radius: 0.25rem; /* rounded */
+}

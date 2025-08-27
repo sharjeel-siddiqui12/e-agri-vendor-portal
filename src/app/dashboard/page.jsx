@@ -1,7 +1,7 @@
-import StatsCards from '@/components/StatsCards';
-import SalesOverviewChart from '@/components/SalesOverviewChart';
-import SalesOverviewMap from '@/components/SalesOverviewMap';
-import AIForecastInputsChart from '@/components/AIForecastInputs';
+import StatsCards from '@/components/charts/StatsCards';
+import SalesOverviewChart from '@/components/charts/SalesOverviewChart';
+import SalesOverviewMap from '@/components/charts/SalesOverviewMap';
+import AIForecastInputsChart from '@/components/charts/AIForecastInputs';
 
 export default function DashboardPage() {
   return (

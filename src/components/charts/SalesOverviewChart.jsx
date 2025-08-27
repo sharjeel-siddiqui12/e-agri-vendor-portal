@@ -1,5 +1,7 @@
 "use client";
 
+import styles from "./SalesOverviewChart.module.css";
+
 import { ChevronDown } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Cell } from "recharts";
 
@@ -11,7 +13,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
@@ -32,18 +33,18 @@ const chartConfig = {
     label: "Sales",
     color: "#4a5d23",
   },
-} 
+};
 
 export default function SalesOverviewChart() {
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="flex items-center gap-2">
-          <div className="w-1 h-6 bg-green-600 rounded"></div>
+      <CardHeader className={styles.header}>
+        <CardTitle className={styles.title}>
+          <div className={styles.titleBar}></div>
           Sales Overview
         </CardTitle>
         <Button variant="outline" size="sm">
-          Seeds <ChevronDown className="w-4 h-4 mr-1" />
+          Seeds <ChevronDown className={styles.chevronIcon} />
         </Button>
       </CardHeader>
       <CardContent>
@@ -57,10 +58,7 @@ export default function SalesOverviewChart() {
               axisLine={false}
             />
             <YAxis />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent />}
-            />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <Bar dataKey="value" radius={4}>
               {salesData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />

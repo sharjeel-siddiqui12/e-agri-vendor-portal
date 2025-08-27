@@ -1,4 +1,7 @@
 'use client';
+
+import styles from './StatsCards.module.css';
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Package, TrendingUp, ShoppingCart, Droplets, User } from 'lucide-react';
 
@@ -13,15 +16,17 @@ const stats = [
 
 export default function StatsCards() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    <div className={styles.container}>
       {stats.map((stat, i) => (
         <Card key={i}>
-          <CardContent className="flex items-center justify-between ">
+          <CardContent className={styles.cardContent}>
             <div>
-              <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-              <p className="text-3xl font-bold">{stat.value}</p>
+              <p className={styles.title}>{stat.title}</p>
+              <p className={styles.value}>{stat.value}</p>
             </div>
-            <stat.icon className={`w-8 h-8 text-gray-400 ${stat.color || ""}`} />
+            <stat.icon
+              className={`${styles.icon} ${stat.color || ""}`}
+            />
           </CardContent>
         </Card>
       ))}

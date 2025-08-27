@@ -1,7 +1,9 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import styles from "./AIForecastInputs.module.css";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 const inputsData = [
@@ -23,17 +25,16 @@ const chartConfig = {
     label: "Forecast",
     color: "#5a6d33", // lighter green
   },
-} 
+};
 
 export default function AIForecastInputsChart() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 ">
-          <div className="w-1 h-6 bg-green-600 rounded"></div>
+        <CardTitle className={styles.titleContainer}>
+          <div className={styles.titleBar}></div>
           AI Forecasted Inputs Requirement
         </CardTitle>
-      
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -52,7 +53,6 @@ export default function AIForecastInputsChart() {
           </BarChart>
         </ChartContainer>
       </CardContent>
-      
     </Card>
   );
 }
