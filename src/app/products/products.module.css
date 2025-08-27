@@ -4,8 +4,8 @@
   --border: #e5e7eb;
   --text: #1a1a1a;
   --muted: #6b7280;
-  --brand: #65a30d;      /* green from screenshots */
-  --brand-dark: #4d7c0f;
+  --brand: #375515;      /* green from screenshots */
+  --brand-dark: #2c4410;
   --blue: #2563eb;
   --badge-bg: #eef6ff;
   --badge-fg: #0369a1;
@@ -59,6 +59,7 @@
   width: 260px;
   height: 40px;
   border: 1px solid var(--border);
+  
   border-radius: 10px;
   background: #fff;
 }
@@ -111,6 +112,82 @@
   border-radius: 10px;
 }
 .addIconBtn:hover { background: var(--brand-dark); }
+
+.controlsRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+/* Make search input fill available space */
+.controlsRow .searchContainer {
+  flex: 1 1 320px;
+  min-width: 220px;
+}
+
+.controlsRow .searchInput {
+  width: 100%;
+  min-width: 180px;
+  font-size: 16px;
+  color: #176216;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.controlsRow .searchIcon {
+  color: #9ca3af;
+}
+
+.controlsRow .filterSelect {
+  min-width: 120px;
+  height: 40px;
+  font-size: 15px;
+  border-radius: 10px;
+  border-color: var(--border);
+  background: #fff;
+}
+
+.controlsRow .headerBtns {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.controlsRow .importBtn {
+  background: #fff;
+  border: 1.5px solid #176216;
+  color: #176216;
+  font-weight: 500;
+  border-radius: 10px;
+  height: 40px;
+  padding: 0 16px;
+}
+
+.controlsRow .addBtn {
+  background: #375515;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 10px;
+  height: 40px;
+  padding: 0 18px;
+  border: none;
+}
+
+.controlsRow .addIconBtn {
+  background: #375515;
+  color: #fff;
+  border-radius: 10px;
+  height: 40px;
+  width: 40px;
+  padding: 0;
+  border: none;
+}
 
 /* ---------- Grid & Card ---------- */
 .productsGrid {
@@ -345,4 +422,14 @@
     gap: 12px;
     align-items: flex-start;
   }
+}
+
+@media (max-width: 900px) {
+  .controlsRow {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 8px;
+  }
+  .controlsRow .searchContainer { min-width: 100px; }
+  .controlsRow .headerBtns { flex-wrap: wrap; gap: 8px; }
 }

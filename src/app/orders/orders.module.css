@@ -9,10 +9,14 @@
 }
 
 /* breadcrumb / title */
+/* ...existing code... */
+
+/* Breadcrumb/Title styling for "Upload product" heading */
 .headerRow {
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-bottom: 8px;
 }
 
 .crumbDot {
@@ -20,13 +24,17 @@
   height: 10px;
   background: #3b82f6; /* blue dot */
   border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .crumbText {
-  font-size: 14px;
-  font-weight: 500;
-  color: #374151;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a202c;
+  letter-spacing: 0.01em;
 }
+
+/* ...existing code... */
 
 /* Grid sections */
 .topGrid {
@@ -92,6 +100,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+  
 }
 
 /* description toolbar */
@@ -186,17 +196,51 @@
 }
 
 .btnCancel {
-  color: #6b7280;
+  background: #fef2f2;
+  color: #dc2626;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  padding: 0 24px;
+  height: 40px;
+  box-shadow: none;
+  transition: background 0.18s;
+}
+.btnCancel:hover {
+  background: #fee2e2;
 }
 
+/* Save button - white background, green border, green text */
 .btnSave {
-  border-color: #d1d5db;
-  color: #374151;
+  background: #fff;
+  color: #176216;
+  border: 1.5px solid #176216;
+  border-radius: 8px;
+  font-weight: 500;
+  padding: 0 24px;
+  height: 40px;
+  box-shadow: none;
+  transition: background 0.18s, border 0.18s;
+}
+.btnSave:hover {
+  background: #f6fbf6;
+  border-color: #176216;
 }
 
+/* Publish button - solid green background, white text */
 .btnPublish {
   background: #176216;
-  color: white;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  padding: 0 24px;
+  height: 40px;
+  box-shadow: none;
+  transition: background 0.18s;
+}
+.btnPublish:hover {
+  background: #114c13;
 }
 
 /* variant chips */
@@ -356,7 +400,7 @@
 /* bottom actions */
 .pageActions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   gap: 12px;
   padding: 12px 0 8px;

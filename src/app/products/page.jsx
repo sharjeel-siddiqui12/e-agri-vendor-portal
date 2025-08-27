@@ -106,50 +106,49 @@ export default function Products() {
 
   return (
     <div className={styles.productsPage}>
-      {/* Header */}
+      {/* Header - Title only */}
       <div className={styles.pageHeader}>
         <h1 className={styles.pageTitle}>Your products</h1>
+      </div>
 
-        <div className={styles.headerControls}>
-          <div className={styles.searchContainer}>
-            <Search className={styles.searchIcon} size={18} />
-            <Input placeholder="Search" className={styles.searchInput} />
-          </div>
+      {/* Controls - full width, below title */}
+      <div className={styles.controlsRow}>
+        <div className={styles.searchContainer}>
+          <Search className={styles.searchIcon} size={18} />
+          <Input placeholder="Search" className={styles.searchInput} />
+        </div>
 
-          <Select defaultValue="all">
-            <SelectTrigger className={styles.filterSelect}>
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent align="end">
-              <SelectItem value="all">Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
-            </SelectContent>
-          </Select>
+        <Select defaultValue="all">
+          <SelectTrigger className={styles.filterSelect}>
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent align="end">
+            <SelectItem value="all">Status</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="inactive">Inactive</SelectItem>
+          </SelectContent>
+        </Select>
 
-          <Select defaultValue="all">
-            <SelectTrigger className={styles.filterSelect}>
-              <SelectValue placeholder="Type" />
-            </SelectTrigger>
-            <SelectContent align="end">
-              <SelectItem value="all">Type</SelectItem>
-              <SelectItem value="fungicide">Fungicide</SelectItem>
-              <SelectItem value="insecticide">Insecticide</SelectItem>
-            </SelectContent>
-          </Select>
+        <Select defaultValue="all">
+          <SelectTrigger className={styles.filterSelect}>
+            <SelectValue placeholder="Type" />
+          </SelectTrigger>
+          <SelectContent align="end">
+            <SelectItem value="all">Type</SelectItem>
+            <SelectItem value="fungicide">Fungicide</SelectItem>
+            <SelectItem value="insecticide">Insecticide</SelectItem>
+          </SelectContent>
+        </Select>
 
-          <div className={styles.headerBtns}>
-            <Button variant="outline" className={styles.importBtn}>
-              <Download size={16} />
-              Import products
-            </Button>
-
-            <Button className={styles.addBtn}>Bulk add products</Button>
-
-            <Button className={styles.addIconBtn} aria-label="Add product">
-              <Plus size={16} />
-            </Button>
-          </div>
+        <div className={styles.headerBtns}>
+          <Button variant="outline" className={styles.importBtn}>
+            <Download size={16} />
+            Import products
+          </Button>
+          <Button className={styles.addBtn}>Bulk add products</Button>
+          <Button className={styles.addIconBtn} aria-label="Add product">
+            <Plus size={16} />
+          </Button>
         </div>
       </div>
 
@@ -171,11 +170,9 @@ export default function Products() {
         >
           &lt;
         </Button>
-
         {Array.from({ length: totalPages }, (_, i) => (
           <PageBtn key={i + 1} page={i + 1} />
         ))}
-
         <Button
           variant="outline"
           size="sm"
