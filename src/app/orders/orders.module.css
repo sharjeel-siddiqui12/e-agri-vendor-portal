@@ -1,0 +1,363 @@
+/* orders.module.css */
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  background: #f9fafb; /* light gray background */
+}
+
+/* breadcrumb / title */
+.headerRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.crumbDot {
+  width: 10px;
+  height: 10px;
+  background: #3b82f6; /* blue dot */
+  border-radius: 50%;
+}
+
+.crumbText {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+/* Grid sections */
+.topGrid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+}
+
+/* card style */
+.cardSoft {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.cardHeader {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.cardContent {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* fields */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.input {
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  padding: 8px 12px;
+  background: #fff;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px #bfdbfe;
+}
+
+.selectTrigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* description toolbar */
+.toolbar {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px 8px 0 0;
+  background: #f9fafb;
+}
+
+.toolbarLeft {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.toolBtn, .toolBtnSmall {
+  color: #6b7280;
+  border-radius: 6px;
+}
+
+.toolBtn:hover, .toolBtnSmall:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.toolSep {
+  height: 20px;
+  background: #e5e7eb;
+  margin: 0 6px;
+}
+
+.paragraphChip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.paragraphChevron {
+  color: #6b7280;
+}
+
+/* textarea */
+.textarea {
+  border-radius: 0 0 8px 8px;
+  border: 1px solid #e5e7eb;
+  min-height: 100px;
+  font-size: 14px;
+  padding: 10px;
+  resize: vertical;
+}
+
+/* grid in content */
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* input with affix */
+.inputWithAffix {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.affixRight {
+  position: absolute;
+  right: 10px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* action buttons */
+.actionsRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.actionsRight {
+  display: flex;
+  gap: 10px;
+}
+
+.btnCancel {
+  color: #6b7280;
+}
+
+.btnSave {
+  border-color: #d1d5db;
+  color: #374151;
+}
+
+.btnPublish {
+  background: #176216;
+  color: white;
+}
+
+/* variant chips */
+.optionRow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chips {
+  display: flex;
+  gap: 8px;
+}
+
+.chip {
+  background: #f3f4f6;
+  color: #374151;
+  border-radius: 6px;
+  font-size: 13px;
+  padding: 4px 8px;
+}
+
+.removeChip {
+  margin-left: 6px;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.optionInputWrap {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.inputSmall {
+  width: 100px;
+}
+
+.plusBtn {
+  background: #fff;
+  color: #176216;
+  border-radius: 9999px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #176216;
+}
+
+/* dropzones */
+.dropzone {
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f9fafb;
+}
+
+.dropzoneButtons {
+  display: flex;
+  gap: 12px;
+}
+
+.btnLight {
+  border-color: #d1d5db;
+  background: #fff;
+  color: #374151;
+}
+
+.btnGhost {
+  color: #6b7280;
+}
+
+.docZone {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.uploadDocBtn {
+  font-size: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+}
+
+.docHint {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* uploads */
+.hiddenInput {
+  display: none;
+}
+
+.thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.thumb {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.thumbImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumbDel {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  line-height: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+
+/* banners */
+.banner {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.bannerSuccess {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.bannerError {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* bottom actions */
+.pageActions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0 8px;
+}

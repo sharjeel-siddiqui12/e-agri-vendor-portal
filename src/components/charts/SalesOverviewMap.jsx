@@ -10,22 +10,20 @@ import PakistanMap from "./PakistanMap";
 export default function SalesOverview() {
   return (
     <Card className={styles.card}>
-      <CardContent className={styles.cardContent}>
-        {/* Left Section */}
-        <div className="flex-1">
-          {/* Header */}
-          <div className={styles.header}>
-            <h3 className={styles.title}>
-              <span className={styles.titleBar} />
-              Sales Overview
-            </h3>
-
-            {/* Dropdown */}
-            <button className={styles.dropdown}>
-              Seeds
-              <ChevronDown className="w-4 h-4" />
-            </button>
-          </div>
+  <CardContent className={styles.cardContent}>
+    {/* Dropdown in top right */}
+    <button className={styles.dropdown}>
+      Seeds
+      <ChevronDown className="w-4 h-4" />
+    </button>
+    {/* Left Section */}
+    <div className="flex-1">
+      <div className={styles.header}>
+        <h3 className={styles.title}>
+          <span className={styles.titleBar} />
+          Sales Overview
+        </h3>
+      </div>
 
           {/* Sales Value */}
           <div>
@@ -60,15 +58,11 @@ export default function SalesOverview() {
             </div>
             <div className={styles.legendItem}>
               <span className={`${styles.legendBar} bg-green-300`}></span>
-              <span className={styles.legendText}>
-                1–999 orders (Low)
-              </span>
+              <span className={styles.legendText}>1–999 orders (Low)</span>
             </div>
             <div className={styles.legendItem}>
               <span className={`${styles.legendBar} bg-gray-200`}></span>
-              <span className={styles.legendText}>
-                0 orders (No Activity)
-              </span>
+              <span className={styles.legendText}>0 orders (No Activity)</span>
             </div>
           </div>
         </div>
