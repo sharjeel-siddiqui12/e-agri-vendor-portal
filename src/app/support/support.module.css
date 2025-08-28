@@ -5,7 +5,6 @@
   font-family: var(--font-inter);
   max-width: 1200px;
   margin: 0 auto;
-  /* margin: 0 auto; */
   padding-left: 20px;
   padding-right: 20px;
 }
@@ -14,6 +13,10 @@
 .topBar {
   padding-bottom: 12px;
   background: #fafbfa;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
 }
 .title {
   font-size: 1.35rem;
@@ -26,69 +29,59 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  width: 100%;
+  width: auto;
 }
-.searchBox {
-  flex: 1 1 480px;
-  min-width: 220px;
+.downloadBtn {
+  background: #fff;
+  color: #375515;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 0 24px;
+  height: 44px;
+  font-size: 1rem;
+  box-shadow: none;
+  transition: background 0.18s;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  background: #fff;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  padding: 0 12px;
-  height: 44px;
-  box-shadow: 0px 1px 2px rgba(60, 84, 20, 0.04);
+  gap: 4px;
 }
-.searchIcon {
-  color: #9ca3af;
-  margin-right: 8px;
+.downloadBtn:hover {
+  background: #f6f6f4;
 }
-.searchInput {
-  width: 100%;
+.createBtn {
+  background: #375515;
+  color: #fff;
   border: none;
-  outline: none;
-  font-size: 16px;
-  color: #385c16;
-  background: transparent;
-}
-.filterWrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-.filterSelect {
-  min-width: 130px;
-  height: 44px;
-  font-size: 15px;
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  background: #fff;
-  padding: 0 34px 0 12px;
-  color: #1a202c;
-  appearance: none;
-  box-shadow: 0px 1px 2px rgba(60, 84, 20, 0.04);
-  font-weight: 500;
-  transition: border 0.15s;
+  font-weight: 600;
+  padding: 0 32px;
+  height: 44px;
+  font-size: 1rem;
+  box-shadow: none;
+  transition: background 0.18s;
+  cursor: pointer;
+  margin-left: auto;
 }
-.filterSelect:focus {
-  border-color: #3c5414;
-}
-.filterSelectIcon {
-  position: absolute;
-  right: 12px;
-  pointer-events: none;
-  color: #9ca3af;
+.createBtn:hover {
+  background: #27430f;
 }
 
 @media (max-width: 900px) {
+  .topBar {
+    flex-direction: column;
+    gap: 8px;
+  }
   .topControls {
     flex-direction: column;
     gap: 10px;
     width: 100%;
   }
   .searchBox,
-  .filterWrap {
+  .filterWrap,
+  .downloadBtn,
+  .createBtn {
     width: 100%;
     min-width: 0;
   }
@@ -112,7 +105,7 @@
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  min-width: 1000px;
+  min-width: 700px;
 }
 .th {
   text-align: left;
@@ -154,7 +147,7 @@
   color: #232323;
   vertical-align: middle;
 }
-.changeBadge {
+.statusBadge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -162,14 +155,15 @@
   font-weight: 500;
   padding: 4px 14px 4px 10px;
   border-radius: 100px;
-  background: #3c5414;
-  color: #fff;
-  min-width: 70px;
+  min-width: 69px;
   justify-content: flex-start;
 }
-.changeArrow {
-  font-size: 15px;
-  margin-right: 4px;
+.statusDot {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  border-radius: 50%;
+  margin-right: 2px;
 }
 .actionsTd {
   text-align: center;
@@ -177,7 +171,7 @@
 .viewBtn {
   background: none;
   border: none;
-  color: #3c5414;
+  color: #375515;
   padding: 0;
   margin: 0;
   cursor: pointer;
@@ -265,9 +259,9 @@
   cursor: not-allowed;
 }
 .pageBtnActive {
-  background: #3c5414;
+  background: #375515;
   color: #fff;
-  border-color: #3c5414;
+  border-color: #375515;
   font-weight: 600;
 }
 .pageEllipsis {
@@ -280,11 +274,11 @@
     padding: 24px 10px;
   }
   .table {
-    min-width: 900px;
+    min-width: 600px;
   }
 }
 @media (max-width: 900px) {
   .table {
-    min-width: 700px;
+    min-width: 400px;
   }
 }

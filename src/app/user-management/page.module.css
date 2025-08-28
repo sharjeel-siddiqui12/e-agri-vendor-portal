@@ -4,6 +4,7 @@
   background: #FAFAFA;
   display: flex;
   flex-direction: column;
+  font-family: var(--font-inter);
 }
 
 .wrapper {
@@ -31,7 +32,7 @@
   margin-bottom: 24px;
   box-shadow: 0 2px 8px #e6e6e66a;
 }
-.definedRolesLabel { font-size: 1rem; color: #101727; margin-bottom: 8px; font-weight: 500; }
+.definedRolesLabel { font-size: 1rem; color: #101727; margin-bottom: 15px; font-weight: 500; }
 .roleRow { display: flex; align-items: flex-start; gap: 8px; font-size: .98rem; margin-bottom: 6px; }
 .roleName { color: #101727; font-weight: 600; }
 .roleAccessList { display: flex; flex-wrap: wrap; gap: 6px; }

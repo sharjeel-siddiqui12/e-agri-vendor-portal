@@ -19,6 +19,7 @@
   padding: 24px;
   background-color: var(--bg);
   min-height: 100vh;
+  font-family: var(--font-inter);
 }
 
 /* ---------- Header ---------- */
@@ -209,6 +210,7 @@
 }
 
 .productCard {
+  font-family: var(--font-inter);
   background: var(--card);
   border-radius: 14px;
   border: 1px solid var(--border);

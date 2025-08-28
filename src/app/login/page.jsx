@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button-submit";
 import { useState } from "react";
 import { useAuth } from "@/providers/auth-provider";
-import styles from "./page.module.css";
+import styles from "./login.module.css";
 import { Mail, Eye, EyeOff, Lock } from "lucide-react";
 
 export default function LoginPage() {

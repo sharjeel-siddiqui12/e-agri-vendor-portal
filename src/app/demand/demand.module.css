@@ -2,7 +2,7 @@
   padding: 32px 0;
   background: #fafbfa;
   min-height: 100vh;
-  font-family: system-ui, sans-serif;
+  font-family: var(--font-inter);
   margin: 0 auto;
   max-width: 1200px;
   /* margin: 0 auto; */

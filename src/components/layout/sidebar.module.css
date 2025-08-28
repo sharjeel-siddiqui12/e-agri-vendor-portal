@@ -77,6 +77,7 @@
 .navItem {
   display: flex;
   align-items: center;
+  
   gap: 12px;
   margin: 4px 12px;
   padding: 10px 12px;
@@ -85,6 +86,7 @@
   transition: all 0.2s ease;
   color: #4b5563;
   position: relative;
+  
 }
 
 .collapsedItem {
@@ -98,7 +100,7 @@
 
 .navItem.active {
   background-color: #f0fdf4;
-  color: #15803d;
+  color: #375515;
   font-weight: 500;
 }
 
@@ -115,13 +117,15 @@
 }
 
 .activeIcon {
-  color: #15803d;
+  color: #375515;
 }
 
 .navText {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  line-height: 1.2;
+  font-size: 0.95em;
 }
 
 .footer {
