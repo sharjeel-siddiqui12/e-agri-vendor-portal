@@ -1,474 +1,205 @@
 "use client";
-
-import { useState, useMemo } from "react";
-import { useCallback } from "react";
-import debounce from "lodash/debounce";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button-loan";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { ChevronDown, Eye, User, Search } from "lucide-react";
+import { useState } from "react";
+import { Search, ChevronDown, ArrowUpDown, Eye, User } from "lucide-react";
 import styles from "./orders.module.css";
-import { createLoanApplicationsDemoData, loanStatusList } from "@/lib/demoData";
-import { filterLoanApplications, sortLoanData } from "@/lib/filterAndSort";
-import SortArrows from "@/components/ui/sort-arrows";
+import { ordersDemoData } from "./orderDemoData";
 
-const demoData = createLoanApplicationsDemoData();
-
-const loanStatusVariants = {
-  "In-review": styles.inReview,
-  Rejected: styles.rejected,
-  Cancelled: styles.cancelled,
-  Recovered: styles.recovered,
-  Disbursed: styles.disbursed,
-  Accepted: styles.accepted,
-  Approved: styles.approved,
+const statusMap = {
+  Pending: { color: "#FFB300", bg: "#FFF8E1" },
+  Delivered: { color: "#4CAF50", bg: "#E8F5E9" },
+  Shipped: { color: "#2196F3", bg: "#E3F2FD" },
+  Cancelled: { color: "#F44336", bg: "#FEECEC" },
 };
 
-const PAGE_SIZE_OPTIONS = [25, 50, 100];
+const columns = [
+  { key: "buyer", label: "Buyer Name", sortable: true },
+  { key: "orderId", label: "Order ID" },
+  { key: "product", label: "Product(s)" },
+  { key: "qty", label: "Qty" },
+  { key: "orderDate", label: "Order Date", sortable: true },
+  { key: "total", label: "Total", sortable: true },
+  { key: "status", label: "Status", sortable: true },
+  { key: "actions", label: "" }
+];
 
-export default function LoanApplicationsPage() {
+export default function OrdersPage() {
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All Status");
-  const [showDropdown, setShowDropdown] = useState(false);
+  const [dateRange, setDateRange] = useState("");
+  const [orderStatus, setOrderStatus] = useState("");
+  const [perPage, setPerPage] = useState(25);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(PAGE_SIZE_OPTIONS[0]);
-  const [sortField, setSortField] = useState("");
-  const [sortOrder, setSortOrder] = useState(""); // "asc", "desc", or ""
+  const [sort, setSort] = useState({ key: null, asc: true });
 
-  // Filter and search
-  const filteredData = useMemo(
-    () => filterLoanApplications(demoData, search, statusFilter),
-    [demoData, search, statusFilter]
+  let filteredOrders = ordersDemoData.filter(order =>
+    order.buyer.name.toLowerCase().includes(search.toLowerCase())
+    || order.product.toLowerCase().includes(search.toLowerCase())
+    || order.orderId.toLowerCase().includes(search.toLowerCase())
+    || order.status.toLowerCase().includes(search.toLowerCase())
   );
+  if (orderStatus) {
+    filteredOrders = filteredOrders.filter(order => order.status === orderStatus);
+  }
   // Sorting
-  const sortedData = useMemo(
-    () => sortLoanData(filteredData, sortField, sortOrder),
-    [filteredData, sortField, sortOrder]
-  );
+  if (sort.key) {
+    filteredOrders = [...filteredOrders].sort((a, b) => {
+      let av = a[sort.key], bv = b[sort.key];
+      if (sort.key === "buyer") {
+        av = a.buyer.name;
+        bv = b.buyer.name;
+      }
+      if (typeof av === "number" && typeof bv === "number") return sort.asc ? av - bv : bv - av;
+      return sort.asc ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
+    });
+  }
+  // Pagination
+  const totalRows = 333;
+  const pageCount = Math.ceil(totalRows / perPage);
 
-  const maxPage = Math.ceil(sortedData.length / pageSize);
-  const paginatedData = sortedData.slice(
-    (page - 1) * pageSize,
-    page * pageSize
-  );
+  // Export CSV
+  const handleExport = () => {
+    const headers = columns.filter(c => c.key !== "actions").map(c => c.label);
+    const rows = filteredOrders.map(order => [
+      order.buyer.name,
+      order.orderId,
+      order.product,
+      order.qty,
+      order.orderDate,
+      order.total,
+      order.status
+    ]);
+    const csv = [headers, ...rows].map(r => r.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "orders.csv";
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
 
-  // Dropdown menu handler
-  function handleDropdownToggle() {
-    setShowDropdown((open) => !open);
-  }
-  function handleDropdownSelect(value) {
-    setStatusFilter(value);
-    setShowDropdown(false);
-    setPage(1);
-  }
-  const handleSearchChange = useCallback(
-    debounce((e) => {
-      setSearch(e.target.value);
-      setPage(1);
-    }, 300),
-    []
-  );
-  function handlePageChange(newPage) {
-    if (newPage < 1 || newPage > maxPage) return;
-    setPage(newPage);
-  }
-  function handlePageSizeChange(e) {
-    setPageSize(Number(e.target.value));
-    setPage(1);
-  }
-  function handleSort(fieldId) {
-    if (sortField !== fieldId) {
-      setSortField(fieldId);
-      setSortOrder("asc");
-    } else {
-      if (sortOrder === "asc") setSortOrder("desc");
-      else if (sortOrder === "desc") {
-        setSortOrder("");
-        setSortField("");
-      } else setSortOrder("asc");
-    }
-  }
+  const handleSort = key => setSort(prev => ({
+    key,
+    asc: prev.key === key ? !prev.asc : true,
+  }));
 
   return (
-    <div className={styles.bg}>
-      <div className={styles.wrapper}>
-        <h1 className={styles.heading}>Applicant Profiles</h1>
-        <div className={styles.topBar}>
-          <div className={styles.searchContainer}>
-            <Input
-              placeholder="Search"
-              defaultValue={search}
-              onChange={handleSearchChange}
+    <div className={styles.page}>
+      {/* --- Top Bar Section --- */}
+      <div className={styles.topBar}>
+        <h1 className={styles.title}>Your Orders</h1>
+        <div className={styles.topControls}>
+          <div className={styles.searchBox}>
+            <Search className={styles.searchIcon} />
+            <input
               className={styles.searchInput}
+              placeholder="Search"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
             />
-            <Search className={styles.searchIcon} size={20} strokeWidth={2} />
-            {/* <span className={styles.searchIcon}>
-              <svg width="20" height="20" fill="none">
-                <path
-                  d="M14.5 14.5L18 18"
-                  stroke="#B0B0B0"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-                <circle
-                  cx="9"
-                  cy="9"
-                  r="6"
-                  stroke="#B0B0B0"
-                  strokeWidth="1.5"
-                />
-              </svg>
-            </span> */}
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <Button
-                variant="outline"
-                className={styles.statusDropdownBtn}
-                onClick={handleDropdownToggle}
-                type="button"
-                aria-haspopup="listbox"
-                aria-expanded={showDropdown}
-              >
-                {statusFilter} <ChevronDown className={styles.chevronIcon} />
-              </Button>
-            </DropdownMenuTrigger>
-            {showDropdown && (
-              <DropdownMenuContent className={styles.statusDropdownMenu}>
-                <DropdownMenuItem
-                  onClick={() => handleDropdownSelect("All Status")}
-                >
-                  All Status
-                </DropdownMenuItem>
-                {loanStatusList.map((status) => (
-                  <DropdownMenuItem
-                    key={status}
-                    onClick={() => handleDropdownSelect(status)}
-                  >
-                    {status}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            )}
-          </DropdownMenu>
+          <div className={styles.filterWrap}>
+            <select className={styles.filterSelect} value={dateRange} onChange={e => setDateRange(e.target.value)}>
+              <option value="">Date Range</option>
+              <option value="last7">Last 7 days</option>
+              <option value="last30">Last 30 days</option>
+              <option value="custom">Custom Range</option>
+            </select>
+            <ChevronDown size={16} className={styles.filterSelectIcon} />
+          </div>
+          <div className={styles.filterWrap}>
+            <select className={styles.filterSelect} value={orderStatus} onChange={e => setOrderStatus(e.target.value)}>
+              <option value="">Order Status</option>
+              <option value="Pending">Pending</option>
+              <option value="Delivered">Delivered</option>
+              <option value="Shipped">Shipped</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+            <ChevronDown size={16} className={styles.filterSelectIcon} />
+          </div>
+          <button className={styles.exportBtn} onClick={handleExport}>Export CSV</button>
         </div>
-        <div className={styles.tableOuter}>
-          <Table>
-            <TableHeader>
-              <TableRow className={styles.tableHeaderRow}>
-                <TableHead
-                  className={`${styles.th} ${styles.thUser} ${styles.thSortable}`}
-                  onClick={() => handleSort("name")}
-                  tabIndex={0}
-                  aria-label="User Name"
-                >
-                  <span className={styles.tableHeading}>
-                    User Name{" "}
-                    <SortArrows
-                      order={sortField === "name" ? sortOrder : undefined}
-                    />
-                  </span>
-                </TableHead>
-                <TableHead
-                  className={`${styles.th} ${styles.thSortable}`}
-                  onClick={() => handleSort("cnic")}
-                  tabIndex={0}
-                  aria-label="CNIC / Farmer ID"
-                >
-                  <span className={styles.tableHeading}>
-                    CNIC / Farmer ID{" "}
-                    <SortArrows
-                      order={sortField === "cnic" ? sortOrder : undefined}
-                    />
-                  </span>
-                </TableHead>
-                <TableHead
-                  className={`${styles.th} ${styles.thSortable}`}
-                  onClick={() => handleSort("region")}
-                  tabIndex={0}
-                  aria-label="Region / District"
-                >
-                  <span className={styles.tableHeading}>
-                    Region / District{" "}
-                    <SortArrows
-                      order={sortField === "region" ? sortOrder : undefined}
-                    />
-                  </span>
-                </TableHead>
-                <TableHead
-                  className={`${styles.th} ${styles.thSortable}`}
-                  onClick={() => handleSort("loanStatus")}
-                  tabIndex={0}
-                  aria-label="Loan Application Status"
-                >
-                  <span className={styles.tableHeading}>
-                    Loan Application Status{" "}
-                    <SortArrows
-                      order={sortField === "loanStatus" ? sortOrder : undefined}
-                    />
-                  </span>
-                </TableHead>
-                <TableHead
-                  className={`${styles.th} ${styles.thSortable}`}
-                  onClick={() => handleSort("kycStatus")}
-                  tabIndex={0}
-                  aria-label="KYC Status"
-                >
-                  <span className={styles.tableHeading}>
-                    KYC Status{" "}
-                    <SortArrows
-                      order={sortField === "kycStatus" ? sortOrder : undefined}
-                    />
-                  </span>
-                </TableHead>
-                <TableHead
-                  className={`${styles.th} ${styles.thSortable}`}
-                  onClick={() => handleSort("loanType")}
-                  tabIndex={0}
-                  aria-label="Loan Type"
-                >
-                  <span className={styles.tableHeading}>
-                    Loan Type{" "}
-                    <SortArrows
-                      order={sortField === "loanType" ? sortOrder : undefined}
-                    />
-                  </span>
-                </TableHead>
-                <TableHead
-                  className={`${styles.th} ${styles.thSortable}`}
-                  onClick={() => handleSort("date")}
-                  tabIndex={0}
-                  aria-label="Application Date"
-                >
-                  <span className={styles.tableHeading}>
-                    Application Date{" "}
-                    <SortArrows
-                      order={sortField === "date" ? sortOrder : undefined}
-                    />
-                  </span>
-                </TableHead>
-                <TableHead className={styles.thIcon}></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {paginatedData.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={8} className={styles.noApplicants}>
-                    No applicants found.
-                  </TableCell>
-                </TableRow>
-              )}
-              {paginatedData.map((app, i) => (
-                <TableRow key={i} className={styles.tableRow}>
-                  <TableCell className={styles.userCell}>
-                    <span>
-                      <User size={40} color="#B0B0B0" />
-                    </span>
-                    <span className={styles.userName}>{app.name}</span>
-                  </TableCell>
-                  <TableCell className={styles.baseCell}>{app.cnic}</TableCell>
-                  <TableCell className={styles.baseCell}>
-                    <span className={styles.regionMain}>{app.region.main}</span>
-                    {app.region.sub && (
-                      <span className={styles.regionSub}>
-                        , {app.region.sub}
-                      </span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <span
-                      className={`${styles.statusPill} ${
-                        loanStatusVariants[app.loanStatus]
-                      }`}
-                    >
-                      <span
-                        className={styles.statusDot}
-                        style={{
-                          background:
-                            app.loanStatus === "In-review"
-                              ? "#FBE69A"
-                              : app.loanStatus === "Rejected"
-                              ? "#FECDCA"
-                              : app.loanStatus === "Cancelled"
-                              ? "#FFC448"
-                              : app.loanStatus === "Recovered"
-                              ? "#84CAFF"
-                              : app.loanStatus === "Disbursed"
-                              ? "#B2DDFF"
-                              : app.loanStatus === "Accepted"
-                              ? "#BAEFC6"
-                              : app.loanStatus === "Approved"
-                              ? "#BBF7D0"
-                              : "#dadada",
-                        }}
-                      ></span>
-                      {app.loanStatus}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <span className={styles.kycPill}>
-                      <span className={styles.kycDot}></span>
-                      {app.kycStatus}
-                    </span>
-                  </TableCell>
-                  <TableCell className={styles.baseCell}>
-                    {app.loanType}
-                  </TableCell>
-                  <TableCell className={styles.baseCell}>{app.date}</TableCell>
-                  <TableCell>
-                    <Button variant="ghost" className={styles.eyeBtn}>
-                      <Eye
-                        className={styles.eyeIcon}
-                        color="#5D882D"
-                        size={22}
-                        strokeWidth={2.2}
-                      />
-                    </Button>
-                  </TableCell>
-                </TableRow>
+      </div>
+      {/* --- End Top Bar Section --- */}
+
+      {/* Table and Pagination remain unchanged below */}
+      <div className={styles.tableWrap}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              {columns.map(col => (
+                <th key={col.key} className={styles.th}>
+                  <div className={styles.thContent} onClick={col.sortable ? () => handleSort(col.key) : undefined}>
+                    {col.label}
+                    {col.sortable && <ArrowUpDown size={14} className={styles.thSortIcon + " " + (sort.key === col.key ? styles.thSortActive : "")} />}
+                  </div>
+                </th>
               ))}
-            </TableBody>
-          </Table>
-          {/* Pagination */}
-          <div className={styles.paginationBar}>
-            <div className={styles.paginationInfo}>
-              <span className={styles.paginationText}>Show</span>
-              <select
-                className={styles.pageSizeSelect}
-                value={pageSize}
-                onChange={handlePageSizeChange}
-              >
-                {PAGE_SIZE_OPTIONS.map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt}
-                  </option>
-                ))}
-              </select>
-              <span className={styles.paginationText}>
-                Showing{" "}
-                {filteredData.length === 0 ? 0 : (page - 1) * pageSize + 1}-
-                {Math.min(page * pageSize, filteredData.length)} of{" "}
-                {filteredData.length}
-              </span>
-            </div>
-            <div className={styles.paginationButtons}>
-              <Button
-                variant="ghost"
-                className={`${styles.pageBtn} ${
-                  page === 1 ? styles.pageBtnDisabled : styles.pageBtnActive
-                }`}
-                onClick={() => handlePageChange(page - 1)}
-                disabled={page === 1}
-              >
-                {"<"}
-              </Button>
-              {/* Page numbers, show max 5 with ... for more than 5 pages */}
-              {(() => {
-                let pages = [];
-                if (maxPage <= 5) {
-                  for (let pg = 1; pg <= maxPage; pg++) {
-                    pages.push(
-                      <Button
-                        key={pg}
-                        variant={pg === page ? "default" : "ghost"}
-                        className={`${styles.pageBtn} ${
-                          pg === page ? styles.pageBtnActive : ""
-                        }`}
-                        onClick={() => handlePageChange(pg)}
-                      >
-                        {pg}
-                      </Button>
-                    );
-                  }
-                } else {
-                  if (page > 3) {
-                    pages.push(
-                      <Button
-                        key={1}
-                        variant="ghost"
-                        className={styles.pageBtn}
-                        onClick={() => handlePageChange(1)}
-                      >
-                        1
-                      </Button>
-                    );
-                    if (page > 4)
-                      pages.push(
-                        <span
-                          key="start-ellipsis"
-                          className={styles.pageEllipsis}
-                        >
-                          ...
-                        </span>
-                      );
-                  }
-                  let start = Math.max(2, page - 1);
-                  let end = Math.min(maxPage - 1, page + 1);
-                  for (let pg = start; pg <= end; pg++) {
-                    pages.push(
-                      <Button
-                        key={pg}
-                        variant={pg === page ? "default" : "ghost"}
-                        className={`${styles.pageBtn} ${
-                          pg === page ? styles.pageBtnActive : ""
-                        }`}
-                        onClick={() => handlePageChange(pg)}
-                      >
-                        {pg}
-                      </Button>
-                    );
-                  }
-                  if (page < maxPage - 2) {
-                    if (page < maxPage - 3)
-                      pages.push(
-                        <span
-                          key="end-ellipsis"
-                          className={styles.pageEllipsis}
-                        >
-                          ...
-                        </span>
-                      );
-                    pages.push(
-                      <Button
-                        key={maxPage}
-                        variant="ghost"
-                        className={styles.pageBtn}
-                        onClick={() => handlePageChange(maxPage)}
-                      >
-                        {maxPage}
-                      </Button>
-                    );
-                  }
-                }
-                return pages;
-              })()}
-              <Button
-                variant="ghost"
-                className={`${styles.pageBtn} ${
-                  page === maxPage || maxPage === 0
-                    ? styles.pageBtnDisabled
-                    : ""
-                }`}
-                onClick={() => handlePageChange(page + 1)}
-                disabled={page === maxPage || maxPage === 0}
-              >
-                {">"}
-              </Button>
-            </div>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredOrders.map((order, idx) => (
+              <tr key={order.id + idx} className={styles.tr}>
+                <td className={styles.td}>
+                  <div className={styles.userCell}>
+                    <div className={styles.avatar}>
+                      <User />
+                    </div>
+                    <span>{order.buyer.name}</span>
+                  </div>
+                </td>
+                <td className={styles.td}>{order.orderId}</td>
+                <td className={styles.td}>{order.product}</td>
+                <td className={styles.td}>{order.qty}</td>
+                <td className={styles.td}>{order.orderDate}</td>
+                <td className={styles.td}>{order.total}</td>
+                <td className={styles.td}>
+                  <span className={styles.statusBadge} style={{
+                    color: statusMap[order.status].color,
+                    background: statusMap[order.status].bg
+                  }}>
+                    <span className={styles.statusDot} style={{ background: statusMap[order.status].color }}/>
+                    {order.status}
+                  </span>
+                </td>
+                <td className={styles.td + " " + styles.actionsTd}>
+                  <button className={styles.viewBtn}><Eye size={18} /></button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {/* Pagination */}
+      <div className={styles.paginationRow}>
+        <div className={styles.paginationLeft}>
+          <span>Show</span>
+          <div className={styles.pageSizeWrap}>
+            <select className={styles.pageSizeSelect} value={perPage} onChange={e => { setPerPage(Number(e.target.value)); setPage(1); }}>
+              {[10, 25, 50, 100].map(n => <option key={n} value={n}>{n}</option>)}
+            </select>
+            <ChevronDown size={14} className={styles.pageSizeIcon} />
           </div>
+          <span>Showing {Math.min((page-1)*perPage+1, totalRows)}-{Math.min(page*perPage, totalRows)} of {totalRows}</span>
+        </div>
+        <div className={styles.paginationBtns}>
+          <button className={styles.pageBtn} onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>{"<"}</button>
+          {/* First page */}
+          <button className={page === 1 ? styles.pageBtnActive : styles.pageBtn} onClick={() => setPage(1)}>1</button>
+          {page > 3 && <span className={styles.pageEllipsis}>...</span>}
+          {Array.from({ length: 3 }).map((_, i) => {
+            const p = page + i - 1;
+            if (p <= 1 || p >= pageCount) return null;
+            return (
+              <button key={p} className={page === p ? styles.pageBtnActive : styles.pageBtn} onClick={() => setPage(p)}>
+                {p}
+              </button>
+            );
+          })}
+          {page < pageCount - 2 && <span className={styles.pageEllipsis}>...</span>}
+          {pageCount > 1 && (
+            <button className={page === pageCount ? styles.pageBtnActive : styles.pageBtn} onClick={() => setPage(pageCount)}>{pageCount}</button>
+          )}
+          <button className={styles.pageBtn} onClick={() => setPage(p => Math.min(pageCount, p + 1))} disabled={page === pageCount}>{">"}</button>
         </div>
       </div>
     </div>

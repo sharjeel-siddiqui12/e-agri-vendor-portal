@@ -30,7 +30,8 @@ const sidebarItems = [
   { name: "Products / Inventory", icon: PackageOpen, href: "/products" },
   { name: "Orders", icon: ShoppingCart, href: "/orders" },
   { name: "Shipments", icon: Truck, href: "/shipments" },
- 
+  { name: "Customers", icon: Users, href: "/customers" },
+
   { name: "Feedback & Reviews", icon: MessageSquare, href: "/feedback" },
   { name: "Demand Intelligence", icon: Brain, href: "/demand" },
   { name: "Market Insights", icon: BarChart2, href: "/insights" },

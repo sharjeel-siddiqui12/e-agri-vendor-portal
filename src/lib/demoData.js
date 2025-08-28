@@ -1,8 +1,8 @@
 // src/lib/demoData.js
 
 
-// Full demo data for loan applications (120 rows, 10 names/avatars)
-export function createLoanApplicationsDemoData() {
+// Full demo data for order applications (120 rows, 10 names/avatars)
+export function createOrderApplicationsDemoData() {
   const names = [
     "Muneeb Ahmed",
     "Ali Raza",
@@ -28,16 +28,13 @@ export function createLoanApplicationsDemoData() {
     { main: "Quetta" },
     { main: "Rawalpindi", sub: "Cantt" },
   ];
-  const loanStatuses = [
-    "In-review",
-    "Rejected",
+  const orderStatuses = [
+    "Shipped",
+    "Pending",
     "Cancelled",
-    "Recovered",
-    "Disbursed",
-    "Accepted",
-    "Approved",
+    "Delivered",
   ];
-  const loanTypes = ["Agri - Production Loan", "Crop Loan"];
+  const orderTypes = ["Agri - Production order", "Crop order"];
   const cnic = "42101-12345-6";
   const kycStatus = "Approved";
   const date = "07 May, 25";
@@ -49,17 +46,17 @@ export function createLoanApplicationsDemoData() {
       name: names[i % names.length],
       cnic: cnic,
       region: regions[i % regions.length],
-      loanStatus: loanStatuses[i % loanStatuses.length],
+      orderStatus: orderStatuses[i % orderStatuses.length],
       kycStatus: kycStatus,
-      loanType: loanTypes[i % loanTypes.length],
+      orderType: orderTypes[i % orderTypes.length],
       date: date,
     });
   }
   return data;
 }
 
-// Short demo data for loan approvals (12 rows, 3 names/avatars)
-export function createLoanApprovalsDemoData() {
+// Short demo data for order approvals (12 rows, 3 names/avatars)
+export function createOrderApprovalsDemoData() {
   const names = [
     "Muneeb Ahmed",
     "Ali Raza",
@@ -78,7 +75,7 @@ export function createLoanApprovalsDemoData() {
     { main: "Quetta" },
     { main: "Rawalpindi", sub: "Cantt" },
   ];
-  const loanStatuses = [
+  const orderStatuses = [
     "In-review",
     "Rejected",
     "Cancelled",
@@ -87,7 +84,7 @@ export function createLoanApprovalsDemoData() {
     "Accepted",
     "Approved",
   ];
-  const loanTypes = ["Agri - Production Loan", "Crop Loan"];
+  const orderTypes = ["Agri - Production order", "Crop order"];
   const cnic = "42101-12345-6";
   const kycStatus = "Approved";
   const date = "07 May, 25";
@@ -99,16 +96,16 @@ export function createLoanApprovalsDemoData() {
       name: names[i % names.length],
       cnic: cnic,
       region: regions[i % regions.length],
-      loanStatus: loanStatuses[i % loanStatuses.length],
+      orderStatus: orderStatuses[i % orderStatuses.length],
       kycStatus: kycStatus,
-      loanType: loanTypes[i % loanTypes.length],
+      orderType: orderTypes[i % orderTypes.length],
       date: date,
     });
   }
   return data;
 }
 
-export const loanStatusList = [
+export const orderStatusList = [
   "In-review",
   "Rejected",
   "Cancelled",
@@ -119,12 +116,12 @@ export const loanStatusList = [
 ];
 
 
-export const demoLoans = [
+export const demoOrders = [
   {
     id: "00-0001",
     user: { name: "Muneeb Ahmed" },
     crop: "Maize",
-    loanAmount: 800000,
+    orderAmount: 800000,
     repaymentStatus: "Pending",
     repaidAmount: 500000,
     outstandingAmount: 300000,
@@ -133,7 +130,7 @@ export const demoLoans = [
     id: "00-0002",
     user: { name: "Sharjeel Siddiqui" },
     crop: "Wheat",
-    loanAmount: 1000000,
+    orderAmount: 1000000,
     repaymentStatus: "Full",
     repaidAmount: 500000,
     outstandingAmount: 500000,
@@ -142,7 +139,7 @@ export const demoLoans = [
     id: "00-0003",
     user: { name: "Asad Ali" },
     crop: "Cotton",
-    loanAmount: 600000,
+    orderAmount: 600000,
     repaymentStatus: "Partial",
     repaidAmount: 100000,
     outstandingAmount: 500000,
@@ -151,7 +148,7 @@ export const demoLoans = [
     id: "00-0004",
     user: { name: "Ayesha Noor" },
     crop: "Wheat",
-    loanAmount: 200000,
+    orderAmount: 200000,
     repaymentStatus: "Full",
     repaidAmount: 100000,
     outstandingAmount: 100000,
@@ -160,7 +157,7 @@ export const demoLoans = [
     id: "00-0005",
     user: { name: "Bilal Saeed" },
     crop: "Cotton",
-    loanAmount: 100000,
+    orderAmount: 100000,
     repaymentStatus: "Partial",
     repaidAmount: 0,
     outstandingAmount: 100000,
@@ -169,7 +166,7 @@ export const demoLoans = [
     id: "00-0006",
     user: { name: "Zain Khan" },
     crop: "Wheat",
-    loanAmount: 1000000,
+    orderAmount: 1000000,
     repaymentStatus: "Full",
     repaidAmount: 300000,
     outstandingAmount: 700000,
@@ -178,7 +175,7 @@ export const demoLoans = [
     id: "00-0007",
     user: { name: "Sara Khan" },
     crop: "Cotton",
-    loanAmount: 500000,
+    orderAmount: 500000,
     repaymentStatus: "Partial",
     repaidAmount: 200000,
     outstandingAmount: 300000,
@@ -187,7 +184,7 @@ export const demoLoans = [
   //   id: "00-0008",
   //   user: { name: "Atif Aslam" },
   //   crop: "Wheat",
-  //   loanAmount: 200000,
+  //   orderAmount: 200000,
   //   repaymentStatus: "Pending",
   //   repaidAmount: 100000,
   //   outstandingAmount: 100000,
@@ -196,7 +193,7 @@ export const demoLoans = [
     id: "00-0009",
     user: { name: "Ali Khan" },
     crop: "Wheat",
-    loanAmount: 200000,
+    orderAmount: 200000,
     repaymentStatus: "Full",
     repaidAmount: 100000,
     outstandingAmount: 100000,
@@ -205,7 +202,7 @@ export const demoLoans = [
     id: "00-0010",
     user: { name: "Babar Azam" },
     crop: "Wheat",
-    loanAmount: 200000,
+    orderAmount: 200000,
     repaymentStatus: "Pending",
     repaidAmount: 100000,
     outstandingAmount: 100000,
@@ -214,7 +211,7 @@ export const demoLoans = [
     id: "00-0011",
     user: { name: "Ronaldo" },
     crop: "Wheat",
-    loanAmount: 200000,
+    orderAmount: 200000,
     repaymentStatus: "Partial",
     repaidAmount: 100000,
     outstandingAmount: 100000,
@@ -223,7 +220,7 @@ export const demoLoans = [
     id: "00-0012",
     user: { name: "Ronaldo" },
     crop: "Wheat",
-    loanAmount: 200000,
+    orderAmount: 200000,
     repaymentStatus: "Pending",
     repaidAmount: 100000,
     outstandingAmount: 100000,

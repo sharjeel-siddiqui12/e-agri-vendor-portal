@@ -9,7 +9,10 @@ import { Topbar } from "@/components/layout/topbar";
 import "./globals.css";
 import { usePathname } from "next/navigation";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"], // you can also add "latin-ext", etc.
+  variable: "--font-inter", // optional: creates a CSS variable
+});
 
 export default function RootLayout({ children }) {
   const [collapsed, setCollapsed] = useState(false);

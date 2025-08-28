@@ -12,6 +12,7 @@ const routeTitleMap = {
   "/products": "Products / Inventory",
   "/orders": "Orders",
   "/shipments": "Shipments",
+  "/customers": "Customers",
   "/feedback": "Feedback & Reviews",
   "/demand": "Demand Intelligence",
   "/insights": "Market Insights",
