@@ -38,7 +38,7 @@ const sidebarItems = [
   { name: "Promotions / Campaigns", icon: Megaphone, href: "/promotions" },
   { name: "Compliance", icon: FileText, href: "/compliance" },
   { name: "User & Role Management", icon: UserCog, href: "/user-management" },
-  { name: "Resource Management", icon: Briefcase, href: "/resource" },
+  { name: "Resource Management", icon: Briefcase, href: "/resource-management" },
   { name: "Store Settings", icon: Settings, href: "/settings" },
   { name: "Help & Support", icon: HelpCircle, href: "/support" },
 ];
