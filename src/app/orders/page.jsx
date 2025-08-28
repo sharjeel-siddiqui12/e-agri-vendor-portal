@@ -1,348 +1,476 @@
 "use client";
 
-import React from "react";
-import styles from "./orders.module.css";
-
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { useState, useMemo } from "react";
+import { useCallback } from "react";
+import debounce from "lodash/debounce";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-import { Plus, ChevronDown, Bold, Italic, Underline, Link as LinkIcon, Code2, MoreHorizontal, Image as ImageIcon, Smile } from "lucide-react";
+import { Button } from "@/components/ui/button-loan";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { ChevronDown, Eye, User, Search } from "lucide-react";
+import styles from "./orders.module.css";
+import { createLoanApplicationsDemoData, loanStatusList } from "@/lib/demoData";
+import { filterLoanApplications, sortLoanData } from "@/lib/filterAndSort";
+import SortArrows from "@/components/ui/sort-arrows";
 
-export default function OrdersPage() {
-  // basic form state (client-only)
-  const [title, setTitle] = React.useState("");
-  const [category, setCategory] = React.useState("title");
-  const [description, setDescription] = React.useState("");
-  const [price, setPrice] = React.useState("500.00");
-  const [stock, setStock] = React.useState("1,000");
-  const [moq, setMoq] = React.useState("50");
-  const [unit, setUnit] = React.useState("kg");
-  const [status, setStatus] = React.useState("active");
-  const [visibility, setVisibility] = React.useState("public");
+const demoData = createLoanApplicationsDemoData();
 
-  // variants
-  const [optionName, setOptionName] = React.useState("Weight");
-  const [optionInput, setOptionInput] = React.useState("");
-  const [optionValues, setOptionValues] = React.useState(["10kg", "50kg", "100kg"]);
+const loanStatusVariants = {
+  "In-review": styles.inReview,
+  Rejected: styles.rejected,
+  Cancelled: styles.cancelled,
+  Recovered: styles.recovered,
+  Disbursed: styles.disbursed,
+  Accepted: styles.accepted,
+  Approved: styles.approved,
+};
 
-  // files
-  const [images, setImages] = React.useState([]);
-  const [documentName, setDocumentName] = React.useState(null);
+const PAGE_SIZE_OPTIONS = [25, 50, 100];
 
-  // UX banners
-  const [banner, setBanner] = React.useState(null);
+export default function LoanApplicationsPage() {
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All Status");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE_OPTIONS[0]);
+  const [sortField, setSortField] = useState("");
+  const [sortOrder, setSortOrder] = useState(""); // "asc", "desc", or ""
 
-  const imageInputRef = React.useRef(null);
-  const docInputRef = React.useRef(null);
+  // Filter and search
+  const filteredData = useMemo(
+    () => filterLoanApplications(demoData, search, statusFilter),
+    [demoData, search, statusFilter]
+  );
+  // Sorting
+  const sortedData = useMemo(
+    () => sortLoanData(filteredData, sortField, sortOrder),
+    [filteredData, sortField, sortOrder]
+  );
 
-  function addOption() {
-    const trimmed = optionInput.trim();
-    if (!trimmed) return;
-    if (optionValues.includes(trimmed)) return;
-    setOptionValues([...optionValues, trimmed]);
-    setOptionInput("");
+  const maxPage = Math.ceil(sortedData.length / pageSize);
+  const paginatedData = sortedData.slice(
+    (page - 1) * pageSize,
+    page * pageSize
+  );
+
+  // Dropdown menu handler
+  function handleDropdownToggle() {
+    setShowDropdown((open) => !open);
   }
-
-  function removeOption(value) {
-    setOptionValues(optionValues.filter(v => v !== value));
+  function handleDropdownSelect(value) {
+    setStatusFilter(value);
+    setShowDropdown(false);
+    setPage(1);
   }
-
-  function onSelectImages(e) {
-    const files = Array.from(e.target.files || []);
-    if (!files.length) return;
-    const previews = files.map(f => URL.createObjectURL(f));
-    setImages(prev => [...prev, ...previews]);
+  const handleSearchChange = useCallback(
+    debounce((e) => {
+      setSearch(e.target.value);
+      setPage(1);
+    }, 300),
+    []
+  );
+  function handlePageChange(newPage) {
+    if (newPage < 1 || newPage > maxPage) return;
+    setPage(newPage);
   }
-
-  function removeImage(url) {
-    setImages(prev => prev.filter(u => u !== url));
+  function handlePageSizeChange(e) {
+    setPageSize(Number(e.target.value));
+    setPage(1);
   }
-
-  function onSelectDoc(e) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setDocumentName(file.name);
-  }
-
-  function validate() {
-    if (!title.trim()) return "Please enter a title.";
-    if (!category) return "Please select a category.";
-    return null;
-  }
-
-  function saveDraft() {
-    const err = validate();
-    if (err) return setBanner({ type: "error", text: err });
-    setBanner({ type: "success", text: "Draft saved locally (no backend)." });
-  }
-
-  function publish() {
-    const err = validate();
-    if (err) return setBanner({ type: "error", text: err });
-    setBanner({ type: "success", text: "Product published (demo)." });
-  }
-
-  function resetForm() {
-    setTitle("");
-    setCategory("title");
-    setDescription("");
-    setPrice("500.00");
-    setStock("1,000");
-    setMoq("50");
-    setUnit("kg");
-    setStatus("active");
-    setVisibility("public");
-    setOptionName("Weight");
-    setOptionInput("");
-    setOptionValues(["10kg", "50kg", "100kg"]);
-    setImages([]);
-    setDocumentName(null);
-    setBanner(null);
+  function handleSort(fieldId) {
+    if (sortField !== fieldId) {
+      setSortField(fieldId);
+      setSortOrder("asc");
+    } else {
+      if (sortOrder === "asc") setSortOrder("desc");
+      else if (sortOrder === "desc") {
+        setSortOrder("");
+        setSortField("");
+      } else setSortOrder("asc");
+    }
   }
 
   return (
-    <div className={styles.wrap}>
-      {/* breadcrumb / title */}
-      <div className={styles.headerRow}>
-        <div className={styles.crumbDot} />
-        <span className={styles.crumbText}>Upload product</span>
-      </div>
-
-      {/* top grid */}
-      <div className={styles.topGrid}>
-        {/* left: basic info */}
-        <Card className={styles.cardSoft}>
-          <CardHeader className={styles.cardHeader}>
-            <CardTitle className={styles.sectionTitle}>Basic Info</CardTitle>
-          </CardHeader>
-          <CardContent className={styles.cardContent}>
-            <div className={styles.twoCol}>
-              <div className={styles.field}>
-                <Label className={styles.label}>Title</Label>
-                <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="Title goes here" className={styles.input} />
-              </div>
-
-              <div className={styles.field}>
-                <Label className={styles.label}>Category</Label>
-                <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger className={`${styles.input} ${styles.selectTrigger}`}>
-                    <SelectValue placeholder="Title goes here" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="title">Title goes here</SelectItem>
-                    <SelectItem value="catA">Category A</SelectItem>
-                    <SelectItem value="catB">Category B</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className={styles.field}>
-              <Label className={styles.label}>Description</Label>
-
-              {/* faux toolbar */}
-              <div className={styles.toolbar}>
-                <div className={styles.toolbarLeft}>
-                  <Button variant="ghost" size="sm" className={styles.toolBtnSmall}>
-                    <ChevronDown size={16} />
-                  </Button>
-                  <Separator orientation="vertical" className={styles.toolSep} />
-                  <div className={styles.paragraphChip}>
-                    Paragraph <ChevronDown size={14} className={styles.paragraphChevron} />
-                  </div>
-                  <Separator orientation="vertical" className={styles.toolSep} />
-                  <Button variant="ghost" size="sm" className={styles.toolBtn}><Bold size={16} /></Button>
-                  <Button variant="ghost" size="sm" className={styles.toolBtn}><Italic size={16} /></Button>
-                  <Button variant="ghost" size="sm" className={styles.toolBtn}><Underline size={16} /></Button>
-                  <Separator orientation="vertical" className={styles.toolSep} />
-                  <Button variant="ghost" size="sm" className={styles.toolBtn}><LinkIcon size={16} /></Button>
-                  <Button variant="ghost" size="sm" className={styles.toolBtn}><ImageIcon size={16} /></Button>
-                  <Button variant="ghost" size="sm" className={styles.toolBtn}><Smile size={16} /></Button>
-                  <Separator orientation="vertical" className={styles.toolSep} />
-                  <Button variant="ghost" size="sm" className={styles.toolBtn}><MoreHorizontal size={16} /></Button>
-                  <Button variant="ghost" size="sm" className={styles.toolBtn}><Code2 size={16} /></Button>
-                </div>
-              </div>
-
-              <Textarea value={description} onChange={e => setDescription(e.target.value)} className={styles.textarea} placeholder="" />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* right: visibility & status */}
-        <Card className={styles.cardSoft}>
-          <CardHeader className={styles.cardHeader}>
-            <CardTitle className={styles.sectionTitle}>Visibility &amp; Status</CardTitle>
-          </CardHeader>
-          <CardContent className={styles.cardContent}>
-            <div className={styles.field}>
-              <Label className={styles.label}>Status</Label>
-              <Select value={status} onValueChange={setStatus}>
-                <SelectTrigger className={`${styles.input} ${styles.selectTrigger}`}>
-                  <SelectValue placeholder="Active" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="draft">Draft</SelectItem>
-                  <SelectItem value="archived">Archived</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className={styles.field}>
-              <Label className={styles.label}>Visibility</Label>
-              <Select value={visibility} onValueChange={setVisibility}>
-                <SelectTrigger className={`${styles.input} ${styles.selectTrigger}`}>
-                  <SelectValue placeholder="Public" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="public">Public</SelectItem>
-                  <SelectItem value="private">Private</SelectItem>
-                  <SelectItem value="unlisted">Unlisted</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* pricing & inventory */}
-      <Card className={styles.cardSoft}>
-        <CardHeader className={styles.cardHeader}>
-          <CardTitle className={styles.sectionTitle}>Pricing &amp; Inventory</CardTitle>
-        </CardHeader>
-        
-        <CardContent className={styles.cardContent}>
-          <div className={styles.twoCol}>
-            <div className={styles.field}>
-              <Label className={styles.label}>Price per unit</Label>
-              <div className={styles.inputWithAffix}>
-                <Input value={price} onChange={e => setPrice(e.target.value)} className={styles.input} />
-                <div className={styles.affixRight}>PKR</div>
-              </div>
-            </div>
-
-            <div className={styles.field}>
-              <Label className={styles.label}>Available stock</Label>
-              <Input value={stock} onChange={e => setStock(e.target.value)} className={styles.input} />
-            </div>
-
-            <div className={styles.field}>
-              <Label className={styles.label}>MOQ (optional)</Label>
-              <Input value={moq} onChange={e => setMoq(e.target.value)} className={styles.input} />
-            </div>
-
-            <div className={styles.field}>
-              <Label className={styles.label}>Unit type</Label>
-              <Select value={unit} onValueChange={setUnit}>
-                <SelectTrigger className={`${styles.input} ${styles.selectTrigger}`}>
-                  <SelectValue placeholder="kg" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="kg">kg</SelectItem>
-                  <SelectItem value="g">g</SelectItem>
-                  <SelectItem value="lb">lb</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+    <div className={styles.bg}>
+      <div className={styles.wrapper}>
+        <h1 className={styles.heading}>Applicant Profiles</h1>
+        <div className={styles.topBar}>
+          <div className={styles.searchContainer}>
+            <Input
+              placeholder="Search"
+              defaultValue={search}
+              onChange={handleSearchChange}
+              className={styles.searchInput}
+            />
+            <Search className={styles.searchIcon} size={20} strokeWidth={2} />
+            {/* <span className={styles.searchIcon}>
+              <svg width="20" height="20" fill="none">
+                <path
+                  d="M14.5 14.5L18 18"
+                  stroke="#B0B0B0"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <circle
+                  cx="9"
+                  cy="9"
+                  r="6"
+                  stroke="#B0B0B0"
+                  strokeWidth="1.5"
+                />
+              </svg>
+            </span> */}
           </div>
-
-          {/* page-level actions moved to bottom bar */}
-        </CardContent>
-      </Card>
-
-      {/* variants */}
-      <Card className={styles.cardSoft}>
-        <CardHeader className={styles.cardHeader}>
-          <CardTitle className={styles.sectionTitle}>Variants</CardTitle>
-        </CardHeader>
-        <CardContent className={styles.cardContent}>
-          <div className={styles.twoCol}>
-            <div className={styles.field}>
-              <Label className={styles.label}>Option name</Label>
-              <Input value={optionName} onChange={e => setOptionName(e.target.value)} className={styles.input} />
-            </div>
-
-            <div className={styles.field}>
-              <Label className={styles.label}>Option Values</Label>
-              <div className={styles.optionRow}>
-                <div className={styles.chips}>
-                  {optionValues.map(v => (
-                    <Badge key={v} className={styles.chip}>{v}</Badge>
-                  ))}
-                </div>
-                <div className={styles.optionInputWrap}>
-                  <Input value={optionInput} onChange={e => setOptionInput(e.target.value)} placeholder="kg" className={styles.inputSmall} onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addOption(); } }} />
-                  <Button size="icon" className={styles.plusBtn} onClick={addOption}>
-                    <Plus size={18} />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* images & documents */}
-      <Card className={styles.cardSoft}>
-        <CardHeader className={styles.cardHeader}>
-          <CardTitle className={styles.sectionTitle}>Images &amp; Documents</CardTitle>
-        </CardHeader>
-        <CardContent className={styles.cardContent}>
-          <div className={styles.field}>
-            <Label className={styles.label}>Image</Label>
-            <div className={styles.dropzone}>
-              <div className={styles.dropzoneButtons}>
-                <input ref={imageInputRef} type="file" accept="image/*" multiple className={styles.hiddenInput} onChange={onSelectImages} />
-                <Button variant="outline" className={styles.btnLight} onClick={() => imageInputRef.current?.click()}>Upload new</Button>
-                <Button variant="ghost" className={styles.btnGhost} onClick={() => imageInputRef.current?.click()}>Select existing</Button>
-              </div>
-            </div>
-            {images.length > 0 && (
-              <div className={styles.thumbs}>
-                {images.map(url => (
-                  <div key={url} className={styles.thumb}>
-                    <img src={url} alt="preview" className={styles.thumbImg} />
-                    <button className={styles.thumbDel} onClick={() => removeImage(url)} aria-label="Remove image">×</button>
-                  </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button
+                variant="outline"
+                className={styles.statusDropdownBtn}
+                onClick={handleDropdownToggle}
+                type="button"
+                aria-haspopup="listbox"
+                aria-expanded={showDropdown}
+              >
+                {statusFilter} <ChevronDown className={styles.chevronIcon} />
+              </Button>
+            </DropdownMenuTrigger>
+            {showDropdown && (
+              <DropdownMenuContent className={styles.statusDropdownMenu}>
+                <DropdownMenuItem
+                  onClick={() => handleDropdownSelect("All Status")}
+                >
+                  All Status
+                </DropdownMenuItem>
+                {loanStatusList.map((status) => (
+                  <DropdownMenuItem
+                    key={status}
+                    onClick={() => handleDropdownSelect(status)}
+                  >
+                    {status}
+                  </DropdownMenuItem>
                 ))}
-              </div>
+              </DropdownMenuContent>
             )}
-          </div>
-
-          <div className={styles.field}>
-            <Label className={styles.label}>Safety Document</Label>
-            <div className={`${styles.dropzone} ${styles.docZone}`}>
-              <span className={styles.docHint}>{documentName || "Upload Document"}</span>
-              <input ref={docInputRef} type="file" className={styles.hiddenInput} onChange={onSelectDoc} />
-              <Button variant="outline" className={styles.uploadDocBtn} onClick={() => docInputRef.current?.click()}>⬆</Button>
+          </DropdownMenu>
+        </div>
+        <div className={styles.tableOuter}>
+          <Table>
+            <TableHeader>
+              <TableRow className={styles.tableHeaderRow}>
+                <TableHead
+                  className={`${styles.th} ${styles.thUser} ${styles.thSortable}`}
+                  onClick={() => handleSort("name")}
+                  tabIndex={0}
+                  aria-label="User Name"
+                >
+                  <span className={styles.tableHeading}>
+                    User Name{" "}
+                    <SortArrows
+                      order={sortField === "name" ? sortOrder : undefined}
+                    />
+                  </span>
+                </TableHead>
+                <TableHead
+                  className={`${styles.th} ${styles.thSortable}`}
+                  onClick={() => handleSort("cnic")}
+                  tabIndex={0}
+                  aria-label="CNIC / Farmer ID"
+                >
+                  <span className={styles.tableHeading}>
+                    CNIC / Farmer ID{" "}
+                    <SortArrows
+                      order={sortField === "cnic" ? sortOrder : undefined}
+                    />
+                  </span>
+                </TableHead>
+                <TableHead
+                  className={`${styles.th} ${styles.thSortable}`}
+                  onClick={() => handleSort("region")}
+                  tabIndex={0}
+                  aria-label="Region / District"
+                >
+                  <span className={styles.tableHeading}>
+                    Region / District{" "}
+                    <SortArrows
+                      order={sortField === "region" ? sortOrder : undefined}
+                    />
+                  </span>
+                </TableHead>
+                <TableHead
+                  className={`${styles.th} ${styles.thSortable}`}
+                  onClick={() => handleSort("loanStatus")}
+                  tabIndex={0}
+                  aria-label="Loan Application Status"
+                >
+                  <span className={styles.tableHeading}>
+                    Loan Application Status{" "}
+                    <SortArrows
+                      order={sortField === "loanStatus" ? sortOrder : undefined}
+                    />
+                  </span>
+                </TableHead>
+                <TableHead
+                  className={`${styles.th} ${styles.thSortable}`}
+                  onClick={() => handleSort("kycStatus")}
+                  tabIndex={0}
+                  aria-label="KYC Status"
+                >
+                  <span className={styles.tableHeading}>
+                    KYC Status{" "}
+                    <SortArrows
+                      order={sortField === "kycStatus" ? sortOrder : undefined}
+                    />
+                  </span>
+                </TableHead>
+                <TableHead
+                  className={`${styles.th} ${styles.thSortable}`}
+                  onClick={() => handleSort("loanType")}
+                  tabIndex={0}
+                  aria-label="Loan Type"
+                >
+                  <span className={styles.tableHeading}>
+                    Loan Type{" "}
+                    <SortArrows
+                      order={sortField === "loanType" ? sortOrder : undefined}
+                    />
+                  </span>
+                </TableHead>
+                <TableHead
+                  className={`${styles.th} ${styles.thSortable}`}
+                  onClick={() => handleSort("date")}
+                  tabIndex={0}
+                  aria-label="Application Date"
+                >
+                  <span className={styles.tableHeading}>
+                    Application Date{" "}
+                    <SortArrows
+                      order={sortField === "date" ? sortOrder : undefined}
+                    />
+                  </span>
+                </TableHead>
+                <TableHead className={styles.thIcon}></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginatedData.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={8} className={styles.noApplicants}>
+                    No applicants found.
+                  </TableCell>
+                </TableRow>
+              )}
+              {paginatedData.map((app, i) => (
+                <TableRow key={i} className={styles.tableRow}>
+                  <TableCell className={styles.userCell}>
+                    <span>
+                      <User size={40} color="#B0B0B0" />
+                    </span>
+                    <span className={styles.userName}>{app.name}</span>
+                  </TableCell>
+                  <TableCell className={styles.baseCell}>{app.cnic}</TableCell>
+                  <TableCell className={styles.baseCell}>
+                    <span className={styles.regionMain}>{app.region.main}</span>
+                    {app.region.sub && (
+                      <span className={styles.regionSub}>
+                        , {app.region.sub}
+                      </span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <span
+                      className={`${styles.statusPill} ${
+                        loanStatusVariants[app.loanStatus]
+                      }`}
+                    >
+                      <span
+                        className={styles.statusDot}
+                        style={{
+                          background:
+                            app.loanStatus === "In-review"
+                              ? "#FBE69A"
+                              : app.loanStatus === "Rejected"
+                              ? "#FECDCA"
+                              : app.loanStatus === "Cancelled"
+                              ? "#FFC448"
+                              : app.loanStatus === "Recovered"
+                              ? "#84CAFF"
+                              : app.loanStatus === "Disbursed"
+                              ? "#B2DDFF"
+                              : app.loanStatus === "Accepted"
+                              ? "#BAEFC6"
+                              : app.loanStatus === "Approved"
+                              ? "#BBF7D0"
+                              : "#dadada",
+                        }}
+                      ></span>
+                      {app.loanStatus}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <span className={styles.kycPill}>
+                      <span className={styles.kycDot}></span>
+                      {app.kycStatus}
+                    </span>
+                  </TableCell>
+                  <TableCell className={styles.baseCell}>
+                    {app.loanType}
+                  </TableCell>
+                  <TableCell className={styles.baseCell}>{app.date}</TableCell>
+                  <TableCell>
+                    <Button variant="ghost" className={styles.eyeBtn}>
+                      <Eye
+                        className={styles.eyeIcon}
+                        color="#5D882D"
+                        size={22}
+                        strokeWidth={2.2}
+                      />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          {/* Pagination */}
+          <div className={styles.paginationBar}>
+            <div className={styles.paginationInfo}>
+              <span className={styles.paginationText}>Show</span>
+              <select
+                className={styles.pageSizeSelect}
+                value={pageSize}
+                onChange={handlePageSizeChange}
+              >
+                {PAGE_SIZE_OPTIONS.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+              <span className={styles.paginationText}>
+                Showing{" "}
+                {filteredData.length === 0 ? 0 : (page - 1) * pageSize + 1}-
+                {Math.min(page * pageSize, filteredData.length)} of{" "}
+                {filteredData.length}
+              </span>
+            </div>
+            <div className={styles.paginationButtons}>
+              <Button
+                variant="ghost"
+                className={`${styles.pageBtn} ${
+                  page === 1 ? styles.pageBtnDisabled : styles.pageBtnActive
+                }`}
+                onClick={() => handlePageChange(page - 1)}
+                disabled={page === 1}
+              >
+                {"<"}
+              </Button>
+              {/* Page numbers, show max 5 with ... for more than 5 pages */}
+              {(() => {
+                let pages = [];
+                if (maxPage <= 5) {
+                  for (let pg = 1; pg <= maxPage; pg++) {
+                    pages.push(
+                      <Button
+                        key={pg}
+                        variant={pg === page ? "default" : "ghost"}
+                        className={`${styles.pageBtn} ${
+                          pg === page ? styles.pageBtnActive : ""
+                        }`}
+                        onClick={() => handlePageChange(pg)}
+                      >
+                        {pg}
+                      </Button>
+                    );
+                  }
+                } else {
+                  if (page > 3) {
+                    pages.push(
+                      <Button
+                        key={1}
+                        variant="ghost"
+                        className={styles.pageBtn}
+                        onClick={() => handlePageChange(1)}
+                      >
+                        1
+                      </Button>
+                    );
+                    if (page > 4)
+                      pages.push(
+                        <span
+                          key="start-ellipsis"
+                          className={styles.pageEllipsis}
+                        >
+                          ...
+                        </span>
+                      );
+                  }
+                  let start = Math.max(2, page - 1);
+                  let end = Math.min(maxPage - 1, page + 1);
+                  for (let pg = start; pg <= end; pg++) {
+                    pages.push(
+                      <Button
+                        key={pg}
+                        variant={pg === page ? "default" : "ghost"}
+                        className={`${styles.pageBtn} ${
+                          pg === page ? styles.pageBtnActive : ""
+                        }`}
+                        onClick={() => handlePageChange(pg)}
+                      >
+                        {pg}
+                      </Button>
+                    );
+                  }
+                  if (page < maxPage - 2) {
+                    if (page < maxPage - 3)
+                      pages.push(
+                        <span
+                          key="end-ellipsis"
+                          className={styles.pageEllipsis}
+                        >
+                          ...
+                        </span>
+                      );
+                    pages.push(
+                      <Button
+                        key={maxPage}
+                        variant="ghost"
+                        className={styles.pageBtn}
+                        onClick={() => handlePageChange(maxPage)}
+                      >
+                        {maxPage}
+                      </Button>
+                    );
+                  }
+                }
+                return pages;
+              })()}
+              <Button
+                variant="ghost"
+                className={`${styles.pageBtn} ${
+                  page === maxPage || maxPage === 0
+                    ? styles.pageBtnDisabled
+                    : ""
+                }`}
+                onClick={() => handlePageChange(page + 1)}
+                disabled={page === maxPage || maxPage === 0}
+              >
+                {">"}
+              </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* bottom page actions */}
-      <div className={styles.pageActions}>
-        <Button variant="ghost" className={styles.btnCancel} onClick={resetForm}>Cancel</Button>
-        <div className={styles.actionsRight}>
-          <Button variant="outline" className={styles.btnSave} onClick={saveDraft}>Save</Button>
-          <Button className={styles.btnPublish} onClick={publish}>Publish</Button>
         </div>
       </div>
-      {banner && (
-        <div className={`${styles.banner} ${banner.type === "success" ? styles.bannerSuccess : styles.bannerError}`}>
-          {banner.text}
-        </div>
-      )}
     </div>
   );
 }
-
-///
-
-///

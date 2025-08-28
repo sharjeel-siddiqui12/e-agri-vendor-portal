@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from "next/navigation"; // for App Router
 import { Search, Download, Plus, Edit3, Eye, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -18,6 +19,7 @@ import styles from './products.module.css'
 import { products as sampleProducts } from '@/lib/productsSampleData'
 
 export default function Products() {
+  const router = useRouter();
   const [products, setProducts] = useState(sampleProducts)
   const [currentPage, setCurrentPage] = useState(1)
   const productsPerPage = 6
@@ -36,6 +38,10 @@ export default function Products() {
       )
     )
   }
+
+  const handleClick = () => {
+    router.push("/products/uploadProduct"); // navigates to /uploadProduct page
+  };
 
   const ProductCard = ({ product }) => (
     <Card className={styles.productCard}>
@@ -146,7 +152,7 @@ export default function Products() {
             Import products
           </Button>
           <Button className={styles.addBtn}>Bulk add products</Button>
-          <Button className={styles.addIconBtn} aria-label="Add product">
+          <Button className={styles.addIconBtn} onClick={handleClick} aria-label="Add product">
             <Plus size={16} />
           </Button>
         </div>

@@ -37,7 +37,7 @@ const chartConfig = {
 
 export default function SalesOverviewChart() {
   return (
-    <Card>
+    <Card className={styles.card}>
       <CardHeader className={styles.header}>
         <CardTitle className={styles.title}>
           <div className={styles.titleBar}></div>

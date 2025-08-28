@@ -29,7 +29,7 @@ const chartConfig = {
 
 export default function AIForecastInputsChart() {
   return (
-    <Card>
+    <Card className={styles.card}>
       <CardHeader>
         <CardTitle className={styles.titleContainer}>
           <div className={styles.titleBar}></div>

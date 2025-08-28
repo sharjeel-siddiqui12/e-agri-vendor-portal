@@ -1,13 +1,14 @@
+
 .card {
-  width: 100%;
+  width: calc(100% + 20rem);
   max-width: 48rem;
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   border-radius: 1rem;
   border: 1px solid rgb(229 231 235);
   padding: 1.5rem;
-  margin-left: auto;
-  margin-right: auto;
-  position: relative; /* Added */
+  margin-left: 0;
+  margin-right: 0;
+  position: relative;
 }
 
 .cardContent {
@@ -61,8 +62,9 @@
 }
 
 .salesValue {
-  font-size: 1.5rem; /* text-2xl */
+  font-size: 1.2rem; /* text-2xl */
   font-weight: 700; /* font-bold */
+  margin-top: 3rem;
 }
 
 .comparison {
@@ -111,6 +113,7 @@
 }
 
 .mapWrapper {
+  margin-top: 3rem;
   display: flex;
   flex: 1;
   justify-content: center;

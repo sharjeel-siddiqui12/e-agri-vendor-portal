@@ -146,7 +146,7 @@ export default function PakistanMap() {
       >
         <BasePakistanMap
           type="select-single"
-          size="280px"
+          size="250px"
           mapColor="#E6E6E6"     // base (unused for painted provinces)
           strokeColor="#D4D4D4"   // initial stroke; we overwrite to white per path
           strokeWidth={1}
