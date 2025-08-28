@@ -19,7 +19,7 @@ const routeTitleMap = {
   "/promotions": "Promotions / Campaigns",
   "/compliance": "Compliance",
   "/user-management": "User & Role Management",
-  "/resource": "Resource Management",
+  "/resource-management": "Resource Management",
   "/settings": "Store Settings",
   "/support": "Help & Support",
 };
